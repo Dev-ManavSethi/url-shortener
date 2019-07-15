@@ -33,7 +33,7 @@ func init() {
 func main() {
 
 models.Router.HandleFunc("/", controllers.Home)
-models.Router.HandleFunc("/success", controllers.Success).Methods("GET")
+models.Router.HandleFunc("/succedess", controllers.Success).Methods("GET")
 models.Router.HandleFunc("/search", controllers.Search).Methods("GET")
 
 	models.Router.HandleFunc("/{slug:[a-zA-Z0-9]+}", controllers.Redirect).Methods("GET")
