@@ -3,8 +3,9 @@
 http://trim-link.herokuapp.com
 
 ##Installation instructions
-2. Install go: https://golang.org/doc/install
-3. Install glide:
+
+1. Install go: https://golang.org/doc/install
+2. Install glide:
 
 Linux:
 ```
@@ -16,7 +17,7 @@ MacOS:
 brew install glide
 ```
 
-4. Clone repo
+3. Run these commands
 ```
 git clone https://github.com/Dev-ManavSethi/url-shortener.git && cd url-shortener
 ```
@@ -27,4 +28,4 @@ glide -i
 go run main.go
 ```
 
-Go to localhost:5000
+4. Go to localhost:5000
