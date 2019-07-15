@@ -1,0 +1,12 @@
+package: github.com/Dev-ManavSethi/url-shortener
+import:
+- package: github.com/go-redis/redis
+  version: ~6.15.3
+- package: github.com/gorilla/mux
+  version: ~1.7.3
+- package: github.com/joho/godotenv
+  version: ~1.3.0
+- package: go.mongodb.org/mongo-driver
+  version: ~1.0.4
+  subpackages:
+  - mongo
