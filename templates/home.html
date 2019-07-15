@@ -1,0 +1,54 @@
+<html>
+      <head>
+            <title>URL shortener</title>
+      </head>
+
+      <body>
+
+      <form class="form-horizontal" action="/" method="post">
+            <fieldset>
+
+                  <!-- Form Name -->
+                  <legend>URL Shortener</legend>
+
+                  <!-- Prepended text-->
+                  <div class="form-group">
+                        <label class="col-md-4 control-label" for="link">Link</label>
+                        <div class="col-md-8">
+                              <div class="input-group">
+                                    <span class="input-group-addon">http://</span>
+                                    <input id="link" name="link" class="form-control" placeholder="subdomain.domain.extension/path1/path2:port" type="text" required="">
+                              </div>
+                              <p class="help-block">Help</p>
+                        </div>
+                  </div>
+
+                  <!-- Prepended text-->
+                  <div class="form-group">
+                        <label class="col-md-4 control-label" for="expiry">Expiry</label>
+                        <div class="col-md-4">
+                              <div class="input-group">
+                                    <span class="input-group-addon">seconds</span>
+                                    <input id="expiry" name="expiry" class="form-control" placeholder="number" type="text">
+                              </div>
+                              <p class="help-block">Help</p>
+                        </div>
+                  </div>
+
+                  <!-- Text input-->
+                  <div class="form-group">
+                        <label class="col-md-4 control-label" for="name">Custom name</label>
+                        <div class="col-md-6">
+                              <input id="name" name="name" type="text" placeholder="url-shortener.herokuapp.com/myname" class="form-control input-md">
+                              <span class="help-block">Help</span>
+                        </div>
+                  </div>
+
+                  <input type="submit"/>
+
+            </fieldset>
+      </form>
+
+
+      </body>
+</html>
