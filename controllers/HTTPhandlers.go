@@ -1,8 +1,12 @@
 package controllers
 
 import (
+	"bufio"
 	"fmt"
+	"io/ioutil"
 	"net/http"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/Dev-ManavSethi/url-shortener/models"
@@ -43,11 +47,37 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	result:= 	models.RedisClient.Set(prefferedName, link, 10000*time.Hour)
 
 
-		fmt.Fprint(w, result.Val())
 
-	time.Sleep(3*time.Second)
-http.Redirect(w,r, "/success", http.StatusSeeOther)
 
+	if result.Val() == "OK"{
+		f, err := os.OpenFile("keys.keys", os.O_APPEND|os.O_WRONLY, 0600)
+		if err != nil {
+			panic(err)
+			f.Close()
+			return
+		}
+
+
+		defer f.Close()
+
+	_, err2 := f.Write([]byte(prefferedName + "\n"))
+	if err2!=nil{
+		panic(err2)
+		f.Close()
+		return
+	}
+
+var Pair models.Pair
+	Pair.Key = prefferedName
+	Pair.Value = link
+	err3 := models.Templates.ExecuteTemplate(w, "success.html", Pair )
+	if err3!=nil{
+
+	}
+
+
+
+	}
 
 		break
 	}
@@ -70,6 +100,13 @@ func Redirect(w http.ResponseWriter, r *http.Request){
 		w.WriteHeader(http.StatusNotFound)
 	}
 
+	//fmt.Fprintln(w, "Redirecting you to: " + link)
+	//fmt.Fprintln(w, "")
+	//fmt.Fprintln(w, "")
+	//fmt.Fprintln(w, "Short link created by trim-link.herokuapp.com")
+	//
+	//time.Sleep(5*time.Second)
+
 	http.Redirect(w, r, link, http.StatusSeeOther)
 }
 
@@ -87,4 +124,43 @@ func Search(w http.ResponseWriter, r *http.Request){
 	} else {
 		fmt.Fprint(w, "dne")
 	}
+}
+
+func AllLinks(w http.ResponseWriter, r *http.Request){
+
+	f , err := os.Open("keys.keys")
+	if err!=nil{
+		panic(err)
+		f.Close()
+		return
+	}
+
+	reader := bufio.NewReader(f)
+	contents , _ := ioutil.ReadAll(reader)
+	keys := strings.Split(string(contents), "\n")
+
+
+	var Pairs []models.Pair
+
+	for _, key := range keys{
+
+
+result := models.RedisClient.Get(key)
+
+var Pair models.Pair
+Pair.Key = key
+Pair.Value = result.Val()
+
+Pairs = append(Pairs, Pair)
+
+}
+
+
+err2 := models.Templates.ExecuteTemplate(w, "all.html", Pairs)
+if err2!=nil{
+
+}
+
+
+
 }

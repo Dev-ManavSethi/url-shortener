@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Success : URL shortened</title>
+</head>
+<body>
+
+{{if .}}
+
+    <h1>Congratulations, you have shortened the URL:</h1>
+    <p>Your short URL is: </p> <a href="http://trim-link.herokuapp.com/{{.Key}}" target="_blank">trim-link.herokuapp.com/{{.Key}}</a>
+{{end}}
+
+</body>
+</html>

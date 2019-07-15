@@ -1,6 +1,7 @@
 <html>
       <head>
             <title>URL shortener</title>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
       </head>
 
       <body>
@@ -18,8 +19,8 @@
                               <div class="input-group">
                                     <span class="input-group-addon">http://</span>
                                     <input id="link" name="link" class="form-control" placeholder="subdomain.domain.extension/path1/path2:port" type="text" required="">
-                              </div>
-                              <p class="help-block">Help</p>
+                              </div><br/>
+{{/*                              <p class="help-block">Help</p>*/}}
                         </div>
                   </div>
 
@@ -30,8 +31,8 @@
                               <div class="input-group">
                                     <span class="input-group-addon">seconds</span>
                                     <input id="expiry" name="expiry" class="form-control" placeholder="number" type="text">
-                              </div>
-                              <p class="help-block">Help</p>
+                              </div><br/>
+{{/*                              <p class="help-block">Help</p>*/}}
                         </div>
                   </div>
 
@@ -40,8 +41,9 @@
                         <label class="col-md-4 control-label" for="name">Custom name</label>
                         <div class="col-md-6">
                               <input id="name" name="name" type="text" placeholder="trim-link.herokuapp.com/myname" class="form-control input-md">
-                              <span class="help-block">Help</span>
-                        </div>
+{{/*                              <span class="help-block">Help</span>*/}}
+                              <p id="existstext"></p>
+                        </div><br/>
                   </div>
 
                   <input type="submit"/>
@@ -49,6 +51,52 @@
             </fieldset>
       </form>
 
+
+      <br/><br/>
+
+      <a href="/all">See all shortened links yet</a>
+
+      <script>
+            $(document).ready(function() {
+
+
+                  $("#name").keyup(function () {
+
+                        var name = $("#name").val()
+
+                        $.get("/search?q=" + name, function (data, status) {
+
+                           //   alert(data + status)
+
+
+                              switch (data) {
+                                    case 'dne':
+
+                                          $("#existstext").css("color", "green")
+                                          $("#existstext").text("Name available")
+                                            //alert(data)
+                                          break
+
+                                    case 'e':
+                                          $("#existstext").css("color", "red")
+                                          $("#existstext").text("Sorry name exists. Please choose another")
+                                           // alert(data)
+
+                                          break
+
+                                    default:
+                                          $("#existstext").css("color", "blue")
+                                          $("#existstext").text("Keep typing, we are checking if name exists")
+                                          break
+                              }
+
+
+                        });
+
+                        // $("input").css("background-color", "pink");
+                  });
+            });
+      </script>
 
       </body>
 </html>

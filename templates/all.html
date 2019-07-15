@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All shortened URLs</title>
+</head>
+<body>
+
+
+
+<h2>All shortened URLs</h2>
+{{if .}}
+{{range .}}
+
+
+<a href="{{.Value}}">trim-link.herokuapp.com/{{.Key}}</a><br/><br/>
+
+
+
+{{end}}
+{{end}}
+
+<footer>
+    <a href="/">Home Page</a><br/></footer>
+</body>
+</html>
