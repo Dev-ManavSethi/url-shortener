@@ -1,16 +1,10 @@
 package controllers
 
 import (
-	"bufio"
 	"fmt"
-	"io/ioutil"
-	"net/http"
-	"os"
-	"strings"
-	"time"
-
 	"github.com/Dev-ManavSethi/url-shortener/models"
 	"github.com/Dev-ManavSethi/url-shortener/utils"
+	"net/http"
 )
 
 func Home(w http.ResponseWriter, r *http.Request) {
@@ -44,39 +38,25 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		}
 		//expiry := r.FormValue("expiry")
 
-	result:= 	models.RedisClient.Set(prefferedName, link, 10000*time.Hour)
 
 
 
-
-	if result.Val() == "OK"{
-		f, err := os.OpenFile("keys.keys", os.O_APPEND|os.O_WRONLY, 0600)
-		if err != nil {
-			panic(err)
-			f.Close()
-			return
-		}
-
-
-		defer f.Close()
-
-	_, err2 := f.Write([]byte(prefferedName + "\n"))
+	utils.SetMapValue(prefferedName, link)
+	err2:= utils.TakeMapBackup()
 	if err2!=nil{
-		panic(err2)
-		f.Close()
-		return
-	}
 
-var Pair models.Pair
-	Pair.Key = prefferedName
-	Pair.Value = link
-	err3 := models.Templates.ExecuteTemplate(w, "success.html", Pair )
-	if err3!=nil{
+		fmt.Fprintln(w, "Error creating short URL ", err2.Error())
 
-	}
+	} else{
 
+		//success
+		var Pair models.Pair
+		Pair.Key = prefferedName
+		Pair.Value= link
+		err := models.Templates.ExecuteTemplate(w, "success.html", Pair)
+		if err!=nil{
 
-
+		}
 	}
 
 		break
@@ -91,23 +71,16 @@ func Redirect(w http.ResponseWriter, r *http.Request){
 		w.WriteHeader(http.StatusBadRequest)
 	}
 
-	result := models.RedisClient.Get(url)
+	link := models.Map[url]
 
-	link := result.Val()
+	if link==""{
+w.WriteHeader(http.StatusNotFound)
 
-	if link ==""{
+	} else {
 
-		w.WriteHeader(http.StatusNotFound)
+
+		http.Redirect(w, r, link, http.StatusSeeOther)
 	}
-
-	//fmt.Fprintln(w, "Redirecting you to: " + link)
-	//fmt.Fprintln(w, "")
-	//fmt.Fprintln(w, "")
-	//fmt.Fprintln(w, "Short link created by trim-link.herokuapp.com")
-	//
-	//time.Sleep(5*time.Second)
-
-	http.Redirect(w, r, link, http.StatusSeeOther)
 }
 
 func Success(w http.ResponseWriter, r *http.Request){
@@ -117,44 +90,25 @@ func Success(w http.ResponseWriter, r *http.Request){
 func Search(w http.ResponseWriter, r *http.Request){
 	query := r.URL.Query().Get("q")
 
-	result := models.RedisClient.Get(query)
-
-	if result.Val() != ""{
+	if _, ok := models.Map[query]; ok{
 		fmt.Fprint(w, "e")
-	} else {
+	}  else {
 		fmt.Fprint(w, "dne")
 	}
+
 }
 
 func AllLinks(w http.ResponseWriter, r *http.Request){
 
-	f , err := os.Open("keys.keys")
-	if err!=nil{
-		panic(err)
-		f.Close()
-		return
-	}
-
-	reader := bufio.NewReader(f)
-	contents , _ := ioutil.ReadAll(reader)
-	keys := strings.Split(string(contents), "\n")
-
-
 	var Pairs []models.Pair
+	for name, link := range models.Map{
 
-	for _, key := range keys{
+		var Pair models.Pair
+		Pair.Key = name
+		Pair.Value = link
 
-
-result := models.RedisClient.Get(key)
-
-var Pair models.Pair
-Pair.Key = key
-Pair.Value = result.Val()
-
-Pairs = append(Pairs, Pair)
-
-}
-
+		Pairs=append(Pairs, Pair)
+	}
 
 err2 := models.Templates.ExecuteTemplate(w, "all.html", Pairs)
 if err2!=nil{
